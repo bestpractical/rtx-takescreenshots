@@ -156,13 +156,30 @@ RFP sent out to the vendors.
         }
     },
     sub {
-        # Comment on ticket #1
+        # Reply to ticket #1
         my $user = RT::User->new( RT->SystemUser );
         $user->Load('jesse');
 
         my $ticket = RT::Ticket->new( $user );
         $ticket->Load(1);
-        $ticket->Correspond( Content => "I'll look into this ASAP." );
+        $ticket->Correspond(
+            MIMEObj => MIME::Entity->build(
+                Type => 'text/html',
+                Data => [<<'.'
+<blockquote>
+<p style="color: red; font-size: xx-large;">The worst has happened.</p>
+<p><b>There's no coffee to be found anywhere in the office.</b></p>
+</blockquote>
+
+<p>I'll look into this ASAP.  Thanks for the heads up.</p><script>alert("hi");</script>
+
+<blockquote>
+<p>Productivity is at an <u>all-time low</u>!</p>
+</blockquote>
+.
+                ],
+            )
+        );
     },
     sub {
         # Setup dashboards
