@@ -101,6 +101,7 @@ search_bulk_update|/Search/Bulk.html?Query=id+<+4;Order=DESC
 ticket_relationships|/Ticket/Graphs/index.html?id=1&Direction=LR&LeadingLink=DependsOn&MaxDepth=0&ShowLinks=MemberOf&ShowLinks=RefersTo&FillUsing=&Level-1-Properties=Subject&Level-1-Properties=Status&Level-2-Properties=Subject&Level-2-Properties=Status&Level-3-Properties=Subject&Level-3-Properties=Status&Update=Update+Graph&SavedSearchId=new&SavedSearchOwner=RT::User-12&SavedSearchDescription=&SavedSearchLoad=
 dashboard|/Dashboards/10/SLA+Performance
 dashboard_subscription|/Dashboards/Subscription.html?id=10
+theme_editor|/Admin/Global/Theme.html
 # Once we hit a mobile page, we resize to a smaller window.  Only mobile pages
 # should be below this line.
 mobile|/m/
