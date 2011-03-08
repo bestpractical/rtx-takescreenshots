@@ -65,8 +65,8 @@ for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
     .
     $firefox->pause(1000);
 
-    print "Screenshotting Ticket: Create\n";
-    $firefox->capture_entire_page_screenshot("$output/Ticket: Create.png");
+    print "Screenshotting ticket_create\n";
+    $firefox->capture_entire_page_screenshot("$output/ticket_create.png");
 }
 
 # Capture the pages we want
@@ -81,11 +81,11 @@ for my $page (@pages) {
 $firefox->stop;
 
 __DATA__
-Homepage|/index.html
-Ticket: Basics|/Ticket/Display.html?id=1
-Ticket: History|/Ticket/History.html?id=2
-Search: Results|/Search/Results.html?Query=id+<+4;Order=DESC
-Search: Bulk Update|/Search/Bulk.html?Query=id+<+4;Order=DESC
-Ticket: Relationships|/Ticket/Graphs/index.html?id=1&Direction=LR&LeadingLink=DependsOn&MaxDepth=0&ShowLinks=MemberOf&ShowLinks=RefersTo&FillUsing=&Level-1-Properties=Subject&Level-1-Properties=Status&Level-2-Properties=Subject&Level-2-Properties=Status&Level-3-Properties=Subject&Level-3-Properties=Status&Update=Update+Graph&SavedSearchId=new&SavedSearchOwner=RT::User-12&SavedSearchDescription=&SavedSearchLoad=
-Dashboard|/Dashboards/10/SLA+Performance
-Dashboard: Subscription|/Dashboards/Subscription.html?id=10
+homepage|/index.html
+ticket_basics|/Ticket/Display.html?id=1
+ticket_history|/Ticket/History.html?id=2
+search_results|/Search/Results.html?Query=id+<+4;Order=DESC
+search_bulk_update|/Search/Bulk.html?Query=id+<+4;Order=DESC
+ticket_relationships|/Ticket/Graphs/index.html?id=1&Direction=LR&LeadingLink=DependsOn&MaxDepth=0&ShowLinks=MemberOf&ShowLinks=RefersTo&FillUsing=&Level-1-Properties=Subject&Level-1-Properties=Status&Level-2-Properties=Subject&Level-2-Properties=Status&Level-3-Properties=Subject&Level-3-Properties=Status&Update=Update+Graph&SavedSearchId=new&SavedSearchOwner=RT::User-12&SavedSearchDescription=&SavedSearchLoad=
+dashboard|/Dashboards/10/SLA+Performance
+dashboard_subscription|/Dashboards/Subscription.html?id=10
