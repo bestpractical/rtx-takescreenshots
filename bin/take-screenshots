@@ -23,7 +23,7 @@ unless ($RT) {
 
 # title|path -> [title, path]
 my @pages = map  { [ split /\|/, $_, 2 ] }
-            grep { not /^#/ }
+            grep { not /^#/ and /\S/ }
             map  { chomp; $_ }
                  <DATA>;
 
