@@ -1,0 +1,2 @@
+This doesn't actually need to be installed to work.  It does expect its
+initialdata file to be loaded, so run make initdb.
