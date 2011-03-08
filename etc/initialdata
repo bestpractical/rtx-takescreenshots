@@ -100,6 +100,7 @@ RFP sent out to the vendors.
         $user->SetRealName('Jesse');
         $user->SetName('jesse');
         $user->SetEmailAddress('sales@bestpractical.com');
+        $user->SetLang('en-us');
     },
     sub {
         my %DependsOn;
