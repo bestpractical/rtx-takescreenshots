@@ -66,12 +66,20 @@ for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
     $firefox->capture_entire_page_screenshot("$output/ticket_create.png");
 }
 
+my $resized = 0;
+
 # Capture the pages we want
 for my $page (@pages) {
     my ($title, $url) = @$page;
 
     print "Screenshotting $title\n";
     $firefox->open("$RT$url");
+
+    if ($url =~ m{^/m/} and not $resized) {
+        resize_window($firefox, 416, 400);
+        $resized = 1;
+    }
+
     $firefox->capture_entire_page_screenshot("$output/$title.png");
 }
 
@@ -93,3 +101,7 @@ search_bulk_update|/Search/Bulk.html?Query=id+<+4;Order=DESC
 ticket_relationships|/Ticket/Graphs/index.html?id=1&Direction=LR&LeadingLink=DependsOn&MaxDepth=0&ShowLinks=MemberOf&ShowLinks=RefersTo&FillUsing=&Level-1-Properties=Subject&Level-1-Properties=Status&Level-2-Properties=Subject&Level-2-Properties=Status&Level-3-Properties=Subject&Level-3-Properties=Status&Update=Update+Graph&SavedSearchId=new&SavedSearchOwner=RT::User-12&SavedSearchDescription=&SavedSearchLoad=
 dashboard|/Dashboards/10/SLA+Performance
 dashboard_subscription|/Dashboards/Subscription.html?id=10
+# Once we hit a mobile page, we resize to a smaller window.  Only mobile pages
+# should be below this line.
+mobile|/m/
+mobile_ticket_basics|/m/ticket/show?id=1
