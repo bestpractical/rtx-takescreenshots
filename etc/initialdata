@@ -70,6 +70,10 @@ our @Tickets = (
         Requestor   => 'jesse',
         Owner       => 'jesse',
         DependsOn   => [ 3, 4 ],
+        Content     => <<'.',
+In accordance with corporate policy, we need to choose roasts from last month's
+RFP sent out to the vendors.
+.
     },
     {
         Queue       => 'General',
