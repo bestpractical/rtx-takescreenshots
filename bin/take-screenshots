@@ -37,11 +37,8 @@ $firefox->type('name=user', 'jesse');
 $firefox->type('name=pass', 'password');
 $firefox->submit('id=login');
 
-# Hack to resize the browser window.  Width is what we really care about, since
-# the screenshots are stitched together vertically to capture the entire page.
-my ($title) = $firefox->get_all_window_titles;
-system qq[wmctrl -r "$title - Mozilla Firefox" -e 0,0,0,975,700];
-$firefox->pause(2000); # give wmctrl time to catch up
+# Resize to something reasonable
+resize_window($firefox, 975, 400);
 
 # Save the subscription so we see it on the homepage
 for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
@@ -79,6 +76,13 @@ for my $page (@pages) {
 }
 
 $firefox->stop;
+
+
+sub resize_window {
+    my ($window, $w, $h) = @_;
+    $window->run_script("window.moveTo(0,0); window.resizeTo($w, $h);");
+    $window->pause(1000);
+}
 
 __DATA__
 homepage|/index.html
