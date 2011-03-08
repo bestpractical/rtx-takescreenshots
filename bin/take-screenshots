@@ -11,14 +11,14 @@ unless (server_is_running) {
 
 use Getopt::Long;
 my $RT      = 'http://localhost:8008';
-my $output  = '/tmp';
+my $output  = $ENV{PWD};
 GetOptions(
     'url=s'     => \$RT,
     'output=s'  => \$output,
 );
 
 unless ($RT) {
-    die "Usage: $0 --url http://localhost:8008 --output /tmp\n";
+    die "Usage: $0 --url http://localhost:8008 --output .\n";
 }
 
 # title|path -> [title, path]
