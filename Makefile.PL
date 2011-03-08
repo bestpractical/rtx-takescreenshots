@@ -11,6 +11,4 @@ starts up.  It is, unfortunately, X only.
 .
 }
 
-requires_external_bin('wmctrl');
-
 &WriteAll;
