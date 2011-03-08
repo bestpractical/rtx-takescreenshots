@@ -1,2 +1,2 @@
 #!/bin/sh
-java -jar bin/selenium-server-standalone-2.0b2.jar
+java -jar bin/selenium-server-standalone-2.0b2.jar "$@"
