@@ -1,0 +1,13 @@
+#!/bin/bash
+in="$1"
+out="${2:-${1%.*}-cropped.${1#*.}}"
+
+# The very large width means the width should never be cropped.  The > means
+# only crop if one of the dimensions is exceeded, so images with a height less
+# than 740px won't be cropped.
+geometry="1024x740>+0+0"
+
+convert "$in" -crop "$geometry" +repage "$out"
+
+echo "Cropped $in"
+

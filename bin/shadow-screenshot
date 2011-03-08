@@ -1,0 +1,17 @@
+#!/bin/bash
+in="$1"
+out="${2:-${1%.*}-shadow.${1#*.}}"
+opacity=50
+spread=14
+offset="+0+0"
+
+# In order to make the pixels outside of the rounded corner transparent, I
+# greenscreened them by setting my background to #00ff00.  There's a little
+# blending happening, so I masked #00ff00 and #00fe00 out.
+
+convert "$in" -transparent "#00ff00" -transparent "#00fe00" \
+    \( +clone -background black -shadow ${opacity}x${spread}$offset \) \
+    +swap -background white -layers merge +repage "$out"
+
+echo "Drop shadowed $in"
+
