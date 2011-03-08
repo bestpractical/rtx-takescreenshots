@@ -102,6 +102,7 @@ ticket_relationships|/Ticket/Graphs/index.html?id=1&Direction=LR&LeadingLink=Dep
 dashboard|/Dashboards/10/SLA+Performance
 dashboard_subscription|/Dashboards/Subscription.html?id=10
 theme_editor|/Admin/Global/Theme.html
+admin_rights_editor|/Admin/Global/GroupRights.html
 # Once we hit a mobile page, we resize to a smaller window.  Only mobile pages
 # should be below this line.
 mobile|/m/
