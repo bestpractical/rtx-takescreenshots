@@ -1,0 +1,91 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use WWW::Selenium;
+use WWW::Selenium::Util qw/server_is_running/;
+
+unless (server_is_running) {
+    die "Please start a Selenium server first.\n";
+}
+
+use Getopt::Long;
+my $RT      = 'http://localhost:8008';
+my $output  = '/tmp';
+GetOptions(
+    'url=s'     => \$RT,
+    'output=s'  => \$output,
+);
+
+unless ($RT) {
+    die "Usage: $0 --url http://localhost:8008 --output /tmp\n";
+}
+
+# title|path -> [title, path]
+my @pages = map  { [ split /\|/, $_, 2 ] }
+            grep { not /^#/ }
+            map  { chomp; $_ }
+                 <DATA>;
+
+my $firefox = WWW::Selenium->new( browser_url => $RT );
+$firefox->start;
+$firefox->open($RT);
+
+# Login
+print "Logging in\n";
+$firefox->type('name=user', 'jesse');
+$firefox->type('name=pass', 'password');
+$firefox->submit('id=login');
+
+# Hack to resize the browser window.  Width is what we really care about, since
+# the screenshots are stitched together vertically to capture the entire page.
+my ($title) = $firefox->get_all_window_titles;
+system qq[wmctrl -r "$title - Mozilla Firefox" -e 0,0,0,953,700];
+$firefox->pause(2000); # give wmctrl time to catch up
+
+# Save the subscription so we see it on the homepage
+for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
+    print "Saving Dashboard subscription\n";
+    $firefox->open($RT . $subscribe->[1]);
+    $firefox->click('Save');
+}
+
+# Mock up the create ticket page
+{
+    $firefox->open("$RT/Ticket/Create.html?Queue=Office");
+    $firefox->select('Object-RT::Ticket--CustomField-1-Values', 'Filterfresh');
+    $firefox->type('Subject', 'Office has run out of coffee!');
+    $firefox->wait_for_element_present('id=cke_Content', 10000);
+    $firefox->run_script(<<"    .");
+        CKEDITOR.instances.Content.setData(
+            "<p style='color: red; font-size: xx-large;'>The worst has happened.</p>"
+          + "<p><b>There is no coffee to be found anywhere in the office.</b></p>"
+          + "<p>Productivity is at an <u>all-time low</u>!</p>"
+        );
+    .
+    $firefox->pause(1000);
+
+    print "Screenshotting Ticket: Create\n";
+    $firefox->capture_entire_page_screenshot("$output/Ticket: Create.png");
+}
+
+# Capture the pages we want
+for my $page (@pages) {
+    my ($title, $url) = @$page;
+
+    print "Screenshotting $title\n";
+    $firefox->open("$RT$url");
+    $firefox->capture_entire_page_screenshot("$output/$title.png");
+}
+
+$firefox->stop;
+
+__DATA__
+Homepage|/index.html
+Ticket: Basics|/Ticket/Display.html?id=1
+Ticket: History|/Ticket/History.html?id=2
+Search: Results|/Search/Results.html?Query=id+<+4;Order=DESC
+Search: Bulk Update|/Search/Bulk.html?Query=id+<+4;Order=DESC
+Ticket: Relationships|/Ticket/Graphs/index.html?id=1&Direction=LR&LeadingLink=DependsOn&MaxDepth=0&ShowLinks=MemberOf&ShowLinks=RefersTo&FillUsing=&Level-1-Properties=Subject&Level-1-Properties=Status&Level-2-Properties=Subject&Level-2-Properties=Status&Level-3-Properties=Subject&Level-3-Properties=Status&Update=Update+Graph&SavedSearchId=new&SavedSearchOwner=RT::User-12&SavedSearchDescription=&SavedSearchLoad=
+Dashboard|/Dashboards/10/SLA+Performance
+Dashboard: Subscription|/Dashboards/Subscription.html?id=10

@@ -1,0 +1,205 @@
+# This is meant to be an easy way to load up our standard demo data for taking
+# screenshots.  It builds on top of the stock initialdata.
+
+@Queues = (
+    {
+        Name              => 'Office',
+        CorrespondAddress => 'office@example.com',
+        CommentAddress    => 'office-comment@example.com',
+    },
+);
+
+@Groups = (
+    # XXX TODO: Groups
+);
+
+@Users = (
+    # We turn root into jesse later
+    map {{
+        Name            => $_,
+        EmailAddress    => "$_\@bestpractical.com",
+        Password        => 'password',
+    }} qw/trs/
+);
+
+@CustomFields = (
+    {
+        Name        => 'Operating System',
+        Queue       => [qw(General Office)],
+        Type        => 'SelectSingle',
+        Values      => [ map +{ Name => $_ }, "Filterfresh", "Linux", "Mac OS X", "Solaris" ],
+        Disabled    => 0,
+    },
+);
+
+@ACL = (
+    (map +{
+        GroupDomain => "SystemInternal",
+        GroupType   => "Everyone",
+        Right       => $_,
+    }, qw/SuperUser/),
+);
+
+@Scrips = (
+    # XXX TODO: scrips
+);
+
+@Templates = (
+    # XXX TODO: templates
+);
+
+our @Tickets = (
+    {
+        Queue       => 'Office',
+        Subject     => 'Office has run out of coffee!',
+        Requestor   => 'trs',
+        Owner       => 'jesse',
+        Status      => 'open',
+        CF          => { 'Operating System' => 'Filterfresh' },
+        DependsOn   => 2,
+        ContentType => 'text/html',
+        Content     => <<'.',
+<p style="color: red; font-size: xx-large;">The worst has happened.</p>
+<p><b>There's no coffee to be found anywhere in the office.</b></p>
+<p>Productivity is at an <u>all-time low</u>!</p>
+.
+    },
+    {
+        Queue       => 'Office',
+        Subject     => 'Order more coffee',
+        Requestor   => 'jesse',
+        Owner       => 'jesse',
+        DependsOn   => [ 3, 4 ],
+    },
+    {
+        Queue       => 'General',
+        Subject     => 'Obtain Series-C funding',
+        Requestor   => 'jesse',
+    },
+    {
+        Queue       => 'General',
+        Subject     => 'Evaluate responses to RFP for coffee roasts',
+        Requestor   => 'jesse',
+        Owner       => 'trs',
+    },
+);
+
+@Final = (
+    sub {
+        # Bookmark ticket #4 and turn root into jesse
+        my $user = RT::User->new( RT->SystemUser );
+        $user->Load('root');
+        $user->SetAttribute(
+            Name    => 'Bookmarks',
+            Content => { 4 => 1 },
+        );
+        $user->SetRealName('Jesse');
+        $user->SetName('jesse');
+        $user->SetEmailAddress('jesse@bestpractical.com');
+    },
+    sub {
+        my %DependsOn;
+
+        # Create a bunch of tickets
+        for (@Tickets) {
+            my %data    = %{$_};
+            my $content = delete $data{Content};
+            my $cfs     = delete $data{CF};
+            my $depends = delete $data{DependsOn};
+
+            # Setup initial content
+            if (defined $content) {
+                my $mime = MIME::Entity->build(
+                    Type => delete $data{ContentType} || 'text/plain',
+                    Data => [ $content ],
+                );
+                $data{'MIMEObj'} = $mime;
+            }
+
+            # Setup CFs
+            for my $name (keys %$cfs) {
+                my $cf = RT::CustomField->new( RT->SystemUser );
+                $cf->Load($name);
+                $data{'CustomField-' . $cf->Id} = $cfs->{$name};
+            }
+
+            # Load the requestor as a user so we can make tickets as them
+            my $user = RT::User->new( RT->SystemUser );
+            $user->Load( $data{Requestor} );
+            $user = RT->SystemUser unless $user->Id;
+
+            my $ticket = RT::Ticket->new( $user );
+            my ($ok, $txn, $msg) = $ticket->Create(%data);
+
+            if ($ok) {
+                print "$msg\n";
+                $DependsOn{$ticket->Id} = ref $depends ? $depends : [$depends]
+                    if $depends;
+            } else {
+                warn "Ticket create failed: $msg\n";
+            }
+        }
+
+        for my $base (keys %DependsOn) {
+            my $user = RT::User->new( RT->SystemUser );
+            $user->Load('jesse');
+
+            my $ticket = RT::Ticket->new( $user );
+            $ticket->Load($base);
+            $ticket->AddLink( Type => 'DependsOn', Target => $_ )
+                for @{ $DependsOn{$base} };
+        }
+    },
+    sub {
+        # Comment on ticket #1
+        my $user = RT::User->new( RT->SystemUser );
+        $user->Load('jesse');
+
+        my $ticket = RT::Ticket->new( $user );
+        $ticket->Load(1);
+        $ticket->Correspond( Content => "I'll look into this ASAP." );
+    },
+    sub {
+        # Setup dashboards
+        my $system = RT->System;
+        my ($id, $msg) = $system->AddAttribute(
+            Name        => 'SavedSearch',
+            Description => 'Unresolved Office tickets',
+            Content     => {
+                SearchType  => 'Ticket',
+                Query       => "Status != 'resolved' AND Status != 'rejected' AND Queue = 'Office'",
+                OrderBy     => 'id',
+                Order       => 'ASC',
+                RowsPerPage => 20,
+                Format      => RT->Config->Get('DefaultSearchResultFormat'),
+            },
+        );
+
+        $system->AddAttribute(
+            Name        => 'Dashboard',
+            Description => 'SLA Performance',
+            Content     => {
+                'Panes' => {
+                    'body' => [
+                        {
+                            'portlet_type' => 'search',
+                            'pane' => 'body',
+                            'id' => $id,
+                            'privacy' => 'RT::System-1',
+                            'description' => 'Saved Search: Unresolved Office tickets'
+                        },
+                        {
+                            'portlet_type' => 'search',
+                            'pane' => 'body',
+                            'id' => '3', # built in default
+                            'privacy' => 'RT::System-1',
+                            'description' => 'Saved Search: Unowned Tickets'
+                        }
+                    ]
+                }
+            },
+        );
+    },
+);
+
+1;
