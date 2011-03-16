@@ -17,6 +17,9 @@ no_index:
   directory:
     - etc
     - inc
+requires:
+  Path::Class: 0
+  WWW::Selenium: 0
 resources:
   license: http://dev.perl.org/licenses/
 version: 0.01
