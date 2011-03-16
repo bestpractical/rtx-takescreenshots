@@ -27,7 +27,7 @@
         Name        => 'Operating System',
         Queue       => [qw(General Office)],
         Type        => 'SelectSingle',
-        Values      => [ map +{ Name => $_ }, "Filterfresh", "Linux", "Mac OS X", "Solaris" ],
+        Values      => [ map +{ Name => $_ }, "Filterfresh", "Linux", "Mac OS X", "Epiphany" ],
         Disabled    => 0,
     },
 );
