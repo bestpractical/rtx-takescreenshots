@@ -1,7 +1,11 @@
 #!/bin/sh
 EXT=`pwd`
 RT=${RTHOME:-~/bps/rt}
+
 cd $RT
-echo -ne "\ny\n" | make dropdb && echo -ne "\n" | make initdb
+# Imitate make regression-reset-db
+./sbin/rt-setup-database --action drop --force
+./sbin/rt-setup-database --action init
+
 cd $EXT
 echo -ne "\n" | make initdb
