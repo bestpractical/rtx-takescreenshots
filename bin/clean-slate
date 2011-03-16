@@ -9,3 +9,6 @@ cd $RT
 
 cd $EXT
 echo -ne "\n" | make initdb
+
+# Rerun Makefile.PL to work around a M::I bug
+perl Makefile.PL
