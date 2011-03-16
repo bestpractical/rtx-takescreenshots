@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 
+use Path::Class qw(file);
 use WWW::Selenium;
 use WWW::Selenium::Util qw/server_is_running/;
 
@@ -20,6 +21,9 @@ GetOptions(
 unless ($RT) {
     die "Usage: $0 --url http://localhost:8008 --output .\n";
 }
+
+# Convert output to absolute path for selenium
+$output = file($output)->absolute;
 
 # title|path -> [title, path]
 my @pages = map  { [ split /\|/, $_, 2 ] }
