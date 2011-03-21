@@ -1,6 +1,14 @@
 # This is meant to be an easy way to load up our standard demo data for taking
 # screenshots.  It builds on top of the stock initialdata.
 
+@Initial = (
+    sub {
+        # We want to make it look like mail always works, and not actually send
+        # any mail
+        RT->Config->Set(MailCommand => 'testfile');
+    }
+);
+
 @Queues = (
     {
         Name              => 'Office',
