@@ -7,6 +7,12 @@ out="${2:-${1%.*}-cropped.${1#*.}}"
 # than 740px won't be cropped.
 geometry="1024x740>+0+0"
 
+# Crop mobile screenshots to a shorter height
+if [[ "$in" =~ mobile ]]; then
+    echo "Using 610 for mobile screenshots"
+    geometry="1024x610>+0+0"
+fi
+
 convert "$in" -crop "$geometry" +repage "$out"
 
 echo "Cropped $in"
