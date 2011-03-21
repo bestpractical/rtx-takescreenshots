@@ -59,8 +59,8 @@ for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
     $firefox->wait_for_element_present('id=cke_Content', 10000);
     $firefox->run_script(<<"    .");
         CKEDITOR.instances.Content.setData(
-            "<p style='color: red; font-size: xx-large;'>The worst has happened.</p>"
-          + "<p><b>There is no coffee to be found anywhere in the office.</b></p>"
+            "<p><b>The worst has happened.</b></p>"
+          + "<p style='color: red; font-size: xx-large;'>There is no coffee to be found anywhere in the office.</p>"
           + "<p>Productivity is at an <u>all-time low</u>!</p>"
         );
     .

@@ -59,8 +59,8 @@ our @Tickets = (
         DependsOn   => 2,
         ContentType => 'text/html',
         Content     => <<'.',
-<p style="color: red; font-size: xx-large;">The worst has happened.</p>
-<p><b>There's no coffee to be found anywhere in the office.</b></p>
+<p><b>The worst has happened.</b></p>
+<p style="color: red; font-size: xx-large;">There's no coffee to be found anywhere in the office.</p>
 <p>Productivity is at an <u>all-time low</u>!</p>
 .
     },
@@ -167,8 +167,8 @@ RFP sent out to the vendors.
                 Type => 'text/html',
                 Data => [<<'.'
 <blockquote>
-<p style="color: red; font-size: xx-large;">The worst has happened.</p>
-<p><b>There's no coffee to be found anywhere in the office.</b></p>
+<p><b>The worst has happened.</b></p>
+<p style="color: red; font-size: xx-large;">There's no coffee to be found anywhere in the office.</p>
 </blockquote>
 
 <p>I'll look into this ASAP.  Thanks for the heads up.</p><script>alert("hi");</script>
