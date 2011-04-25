@@ -18,7 +18,15 @@
 );
 
 @Groups = (
-    # XXX TODO: Groups
+    {
+        Name    => "Best Practical staff",
+        Domain  => "UserDefined",
+    },
+    {
+        Name     => "RT hackers",
+        Domain   => "UserDefined",
+        MemberOf => "Best Practical staff",
+    },
 );
 
 @Users = (
@@ -51,6 +59,18 @@
         GroupType   => "Requestor",
         Right       => $_,
     }, qw/CreateTicket ReplyToTicket SeeCustomField ShowTicket/),
+    (map +{
+        Queue       => 0,
+        GroupDomain => "UserDefined",
+        GroupId     => "Best Practical staff",
+        Right       => $_,
+    }, qw/CommentOnTicket ShowTicketComments SeeQueue ShowOutgoingEmail/),
+    (map +{
+        Queue       => 0,
+        GroupDomain => "UserDefined",
+        GroupId     => "RT hackers",
+        Right       => $_,
+    }, qw/OwnTicket TakeTicket DeleteTicket RejectTicket ModifyTicket ModifyTicketStatus/),
 );
 
 @Scrips = (
