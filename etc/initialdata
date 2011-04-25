@@ -46,6 +46,11 @@
         GroupType   => "Everyone",
         Right       => $_,
     }, qw/SuperUser/),
+    (map +{
+        GroupDomain => "RT::System-Role",
+        GroupType   => "Requestor",
+        Right       => $_,
+    }, qw/CreateTicket ReplyToTicket SeeCustomField ShowTicket/),
 );
 
 @Scrips = (
