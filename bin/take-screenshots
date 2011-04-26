@@ -150,7 +150,8 @@ ticket_relationships|/Ticket/Graphs/index.html?id=1&Direction=LR&LeadingLink=Dep
 ticket_charts|/Search/Chart.html?Query=Created+%3C+%27tomorrow%27&SavedChartSearchId=new&ChartStyle=bar&PrimaryGroupBy=Owner.Name
 dashboard|/Dashboards/10/SLA+Performance
 dashboard_subscription|/Dashboards/Subscription.html?id=10
-# Theme editor is special-cased above
+# The theme editor is also special-cased above for more interesting screenshots
+theme_editor_defaults|/Admin/Tools/Theme.html
 # acl-User_Defined-22 is the Best Practical staff group
 admin_rights_editor|/Admin/Global/GroupRights.html#acl-User_Groups-22
 # Once we hit a mobile page, we resize to a smaller window.  Only mobile pages
