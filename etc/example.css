@@ -1,0 +1,34 @@
+/* Page */
+body { background: #f6f6f6; }
+
+/* Header */
+div#quickbar { background: #fedc91 url(http://hiveminder.com/static/images/nav.gradient.png) repeat-x left bottom; color: black; border: none; }
+body.aileron #main-navigation #app-nav > li, body.aileron #main-navigation #app-nav > li > a, #prefs-menu > li, #prefs-menu > li > a, #logo .rtname { color: black }
+
+/* Page title */
+div#header h1 { color: #000000 }
+
+/* Page content */
+div#body { border: 1px solid #aaa }
+
+/* Buttons */
+input[type="reset"], input[type="submit"], input[class="button"] {
+    border: 1px solid #EA3;
+    border-right: 1px solid #D92;
+    border-bottom: 1px solid #D92;
+    background-color: #FB5;
+    color: black;
+    font-weight: bold;
+}
+
+div#body input[type="reset"], div#body input[type="submit"], div#body input[class="button"], div#body button { font-size: 0.9em; }
+
+/* Button hover */
+input[type="reset"]:hover, input[type="submit"]:hover, input[class="button"]:hover {
+    border: 1px solid #EA3;
+    border-right: 1px solid #D92;
+    border-bottom: 1px solid #D92;
+    background-color: #ea3;
+    color: black;
+    font-weight: bold;
+}

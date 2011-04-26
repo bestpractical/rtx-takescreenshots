@@ -70,6 +70,37 @@ for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
     $firefox->capture_entire_page_screenshot("$output/ticket_create.png");
 }
 
+# Set up an example Hiveminder branding :)
+{
+    $firefox->open("$RT/Admin/Tools/Theme.html");
+    $firefox->attach_file('logo-upload', 'file://' . etc('example-logo.png'));
+    # the Upload button doesn't have a name or ID
+    $firefox->click('css=input[value="Upload"]');
+    $firefox->wait_for_page_to_load(1000);
+
+    $firefox->select('section', 'Page');
+    $firefox->click('css=.primary-colors button:nth-of-type(1)');
+    
+    $firefox->select('section', 'Page title');
+    $firefox->run_script('jQuery.farbtastic("#color-picker").setColor("#000000");');
+
+    print "Screenshotting theme/brand editor\n";
+    $firefox->capture_entire_page_screenshot("$output/theme_editor.png");
+
+    $firefox->type('user_css', advanced_css());
+    $firefox->click('try');
+    $firefox->pause(1000);
+
+    print "Screenshotting theme/brand editor, advanced\n";
+    $firefox->capture_entire_page_screenshot("$output/theme_editor_advanced.png");
+
+    # reset it all
+    for my $button (qw(reset_css reset_logo)) {
+        $firefox->click($button);
+        $firefox->wait_for_page_to_load(1000);
+    }
+}
+
 my $resized = 0;
 
 # Capture the pages we want
@@ -96,17 +127,30 @@ sub resize_window {
     $window->pause(1000);
 }
 
+sub etc {
+    file($0)->dir->parent->subdir('etc')->file(shift)->absolute;
+}
+
+sub advanced_css {
+    local $/;
+    open my $fh, '<', etc('example.css') or return;
+    my $css = <$fh>;
+    close $fh;
+    return $css;
+}
+
 __DATA__
 homepage|/index.html
 ticket_basics|/Ticket/Display.html?id=1
 ticket_history|/Ticket/History.html?id=1
+# Ticket create is special-cased above
 search_results|/Search/Results.html?Query=id+<+4;Order=DESC
 search_bulk_update|/Search/Bulk.html?Query=id+<+4;Order=DESC
 ticket_relationships|/Ticket/Graphs/index.html?id=1&Direction=LR&LeadingLink=DependsOn&MaxDepth=0&ShowLinks=MemberOf&ShowLinks=RefersTo&FillUsing=&Level-1-Properties=Subject&Level-1-Properties=Status&Level-2-Properties=Subject&Level-2-Properties=Status&Level-3-Properties=Subject&Level-3-Properties=Status&Update=Update+Graph&SavedSearchId=new&SavedSearchOwner=RT::User-12&SavedSearchDescription=&SavedSearchLoad=
 ticket_charts|/Search/Chart.html?Query=Created+%3C+%27tomorrow%27&SavedChartSearchId=new&ChartStyle=bar&PrimaryGroupBy=Owner.Name
 dashboard|/Dashboards/10/SLA+Performance
 dashboard_subscription|/Dashboards/Subscription.html?id=10
-theme_editor|/Admin/Tools/Theme.html
+# Theme editor is special-cased above
 # acl-User_Defined-22 is the Best Practical staff group
 admin_rights_editor|/Admin/Global/GroupRights.html#acl-User_Groups-22
 # Once we hit a mobile page, we resize to a smaller window.  Only mobile pages
