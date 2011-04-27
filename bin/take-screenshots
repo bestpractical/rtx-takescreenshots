@@ -144,6 +144,7 @@ __DATA__
 homepage|/index.html
 ticket_basics|/Ticket/Display.html?id=1
 ticket_history|/Ticket/History.html?id=1
+ticket_update|/Ticket/Update.html?id=1
 # Ticket create is special-cased above
 search_results|/Search/Results.html?Query=id+<+4;Order=DESC
 search_bulk_update|/Search/Bulk.html?Query=id+<+4;Order=DESC
