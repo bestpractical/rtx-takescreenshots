@@ -109,6 +109,7 @@ for my $page (@pages) {
 
     print "Screenshotting $title\n";
     $firefox->open("$RT$url");
+    $firefox->wait_for_page_to_load(5000);
 
     if ($url =~ m{^/m/} and not $resized) {
         resize_window($firefox, 416, 400);
