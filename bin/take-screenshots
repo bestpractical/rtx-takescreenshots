@@ -101,6 +101,16 @@ for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
     }
 }
 
+# Nab the menus in action
+{
+    $firefox->open($RT);
+    $firefox->run_script('jQuery("#tools-config-queues-select").focus();');
+    $firefox->pause(1000);
+    print "Screenshotting aileron_menus\n";
+    $firefox->capture_entire_page_screenshot("$output/aileron_menus.png");
+    $firefox->open($RT);
+}
+
 my $resized = 0;
 
 # Capture the pages we want
