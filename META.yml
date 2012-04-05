@@ -17,6 +17,8 @@ no_index:
   directory:
     - etc
     - inc
+recommends:
+  Alien::SeleniumRC: 0
 requires:
   Path::Class: 0
   WWW::Selenium: 0

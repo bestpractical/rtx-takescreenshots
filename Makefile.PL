@@ -5,5 +5,6 @@ all_from('lib/RTx/TakeScreenshots.pm');
 
 requires 'Path::Class';
 requires 'WWW::Selenium';
+recommends 'Alien::SeleniumRC';
 
 &WriteAll;

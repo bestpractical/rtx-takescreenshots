@@ -7,20 +7,49 @@ use Path::Class qw(file);
 use WWW::Selenium;
 use WWW::Selenium::Util qw/server_is_running/;
 
-unless (server_is_running) {
-    die "Please start a Selenium server first.\n";
-}
-
 use Getopt::Long;
 my $RT      = 'http://localhost:8008';
 my $output  = $ENV{PWD};
+my $verbose = 0;
 GetOptions(
     'url=s'     => \$RT,
     'output=s'  => \$output,
+    'verbose'   => \$verbose,
 );
 
 unless ($RT) {
     die "Usage: $0 --url http://localhost:8008 --output .\n";
+}
+
+my $PID;
+unless (server_is_running) {
+    eval { require Alien::SeleniumRC; 1; }
+        or die "Please start a Selenium server first, or install Alien::SeleniumRC so I can do it for you.\n";
+
+    $PID = fork();
+    die if $PID == -1;
+    if ($PID) {
+        # parent
+        sleep 5; # time for java to find it's pants
+    } else {
+        # child
+        unless ($verbose) {
+            close *STDERR;
+            close *STDOUT;
+        }
+        $ENV{PATH} = "$ENV{PATH}:/usr/lib/firefox:/usr/lib/mozilla-firefox";
+        print STDERR "started selenium server [$$]\n" if $verbose;
+        local $SIG{TERM} = sub { exit 0 };
+        my $jarfile = Alien::SeleniumRC::find_jar_location();
+        exec "java -jar $jarfile" or die "couldn't exec! $!\n";
+    }
+}
+
+END {
+    if ($PID) {
+        print STDERR "killing $PID\n" if $verbose;
+        kill(15, $PID);
+    }
 }
 
 # Convert output to absolute path for selenium
