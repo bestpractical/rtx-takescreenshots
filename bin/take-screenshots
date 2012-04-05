@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 
+use List::Util qw(first);
 use Path::Class qw(file);
 use WWW::Selenium;
 use WWW::Selenium::Util qw/server_is_running/;
@@ -111,6 +112,19 @@ for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
     $firefox->open($RT);
 }
 
+# Show some tweakable prefs
+{
+    shoot_pref(
+        pref => 'DeferTransactionLoading',
+        page => 'ticket_basics',
+    );
+
+    shoot_pref(
+        pref => 'SimplifiedRecipients',
+        page => 'ticket_update',
+    );
+}
+
 my $resized = 0;
 
 # Capture the pages we want
@@ -131,6 +145,25 @@ for my $page (@pages) {
 
 $firefox->stop;
 
+
+sub shoot_pref {
+    my %args = ( vals => [1,0], @_ );
+    my $pref = $args{'pref'};
+    my $shot = $args{'page'};
+    my ($on, $off) = @{$args{'vals'}};
+
+    my $name = "pref$pref";
+       $name =~ s/([a-z])([A-Z])/$1_\L$2\E/g;
+
+    $firefox->open("$RT/Prefs/Other.html?Update=1;$pref=$on");
+    $firefox->open(map { $RT . $_->[1] } first { $_->[0] eq $shot } @pages);
+    $firefox->wait_for_page_to_load(5000);
+    print "Screenshotting $name\n";
+    $firefox->capture_entire_page_screenshot("$output/$name.png");
+    $firefox->open("$RT/Prefs/Other.html?Update=1;$pref=$off");
+
+    $firefox->open($RT);
+}
 
 sub resize_window {
     my ($window, $w, $h) = @_;

@@ -35,7 +35,7 @@
         Name            => $_,
         EmailAddress    => "$_\@bestpractical.com",
         Password        => 'password',
-    }} qw/trs/
+    }} qw/tom alex kevin ruslan sunnavy jim/
 );
 
 @CustomFields = (
@@ -85,7 +85,7 @@ our @Tickets = (
     {
         Queue       => 'Office',
         Subject     => 'Office has run out of coffee!',
-        Requestor   => 'trs',
+        Requestor   => 'tom',
         Owner       => 'jesse',
         Status      => 'open',
         CF          => { 'Operating System' => 'Filterfresh' },
@@ -117,11 +117,29 @@ RFP sent out to the vendors.
         Queue       => 'General',
         Subject     => 'Evaluate responses to RFP for coffee roasts',
         Requestor   => 'jesse',
-        Owner       => 'trs',
+        Owner       => 'tom',
     },
 );
 
 @Final = (
+    sub {
+        # Add hackers as an Office watcher so preview scrips has data
+        my $hackers = RT::Group->new( RT->SystemUser );
+        $hackers->LoadUserDefinedGroup('RT hackers');
+        for my $person (map { $_->{'Name'} } @Users) {
+            my $principal = RT::User->new( RT->SystemUser );
+            $principal->Load($person);
+            my ($ok, $msg) = $hackers->AddMember( $principal->Id );
+            warn "AddMember: $msg" unless $ok;
+        }
+
+        my $queue = RT::Queue->new( RT->SystemUser );
+        $queue->Load('Office');
+        $queue->AddWatcher(
+            Type        => 'AdminCc',
+            PrincipalId => $hackers->Id,
+        );
+    },
     sub {
         # Bookmark ticket #4 and turn root into jesse
         my $user = RT::User->new( RT->SystemUser );
