@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 EXT=`pwd`
 RT=${RTHOME:-~/bps/rt}
 
-if [ "${RT_DBA_USER}x" == "x" ]; then
+if [[ "${RT_DBA_USER}x" == "x" ]]; then
     echo "You must set RT_DBA_USER";
     exit 1;
 fi
