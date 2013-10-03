@@ -2,3 +2,6 @@ This doesn't actually need to be installed to work.  It does expect its
 initialdata file to be loaded, so run make initdb.  Even better, run
 ./bin/clean-slate to force reset your RT database and then run make
 initdb in this extension.
+
+You will need to make sure that $RestrictReferrer is turned _off_ in
+your RT_SiteConfig.pm
