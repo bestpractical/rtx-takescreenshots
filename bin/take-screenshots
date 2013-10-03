@@ -109,8 +109,11 @@ for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
     $firefox->wait_for_page_to_load(1000);
 
     $firefox->select('section', 'Page');
+    $firefox->click('css=.primary-colors button:nth-of-type(2)');
+
+    $firefox->select('section', 'Title bar');
     $firefox->click('css=.primary-colors button:nth-of-type(1)');
-    
+
     $firefox->select('section', 'Page title');
     $firefox->run_script('jQuery.farbtastic("#color-picker").setColor("#000000");');
 
@@ -144,11 +147,6 @@ for my $subscribe (grep { $_->[1] =~ /Dashboards\/Subscription/ } @pages) {
 # Show some tweakable prefs
 {
     shoot_pref(
-        pref => 'DeferTransactionLoading',
-        page => 'ticket_basics',
-    );
-
-    shoot_pref(
         pref => 'SimplifiedRecipients',
         page => 'ticket_update',
     );
@@ -162,7 +160,11 @@ for my $page (@pages) {
 
     print "Screenshotting $title\n";
     $firefox->open("$RT$url");
-    $firefox->wait_for_page_to_load(5000);
+    if ($url =~ m{Ticket/Display}) {
+        $firefox->pause(3000);
+    } else {
+        $firefox->wait_for_page_to_load(5000);
+    }
 
     if ($url =~ m{^/m/} and not $resized) {
         resize_window($firefox, 416, 400);
@@ -222,8 +224,8 @@ search_results|/Search/Results.html?Query=id+<+4;Order=DESC
 search_bulk_update|/Search/Bulk.html?Query=id+<+4;Order=DESC
 ticket_relationships|/Ticket/Graphs/index.html?id=1&Direction=LR&LeadingLink=DependsOn&MaxDepth=0&ShowLinks=MemberOf&ShowLinks=RefersTo&FillUsing=&Level-1-Properties=Subject&Level-1-Properties=Status&Level-2-Properties=Subject&Level-2-Properties=Status&Level-3-Properties=Subject&Level-3-Properties=Status&Update=Update+Graph&SavedSearchId=new&SavedSearchOwner=RT::User-12&SavedSearchDescription=&SavedSearchLoad=
 ticket_charts|/Search/Chart.html?Query=Created+%3C+%27tomorrow%27&SavedChartSearchId=new&ChartStyle=bar&PrimaryGroupBy=Owner.Name
-dashboard|/Dashboards/10/SLA+Performance
-dashboard_subscription|/Dashboards/Subscription.html?id=10
+dashboard|/Dashboards/11/SLA+Performance
+dashboard_subscription|/Dashboards/Subscription.html?id=11
 # The theme editor is also special-cased above for more interesting screenshots
 theme_editor_defaults|/Admin/Tools/Theme.html
 # acl-User_Defined-22 is the Best Practical staff group

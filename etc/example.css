@@ -8,6 +8,9 @@ body.aileron #main-navigation #app-nav > li, body.aileron #main-navigation #app-
 /* Page title */
 div#header h1 { color: #000000 }
 
+/* Title bar */
+div#header { background: #f6f6f6; color: #000000 }
+
 /* Page content */
 div#body { border: 1px solid #aaa }
 
